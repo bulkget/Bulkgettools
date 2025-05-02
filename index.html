@@ -1,11 +1,9 @@
 
-
-  <meta content='width=device-width, initial-scale=1.0, user-scalable=1.0, minimum-scale=1.0, maximum-scale=5.0' name='viewport'/>
+<meta content='width=device-width, initial-scale=1.0, user-scalable=1.0, minimum-scale=1.0, maximum-scale=5.0' name='viewport'/>
 
 <style>
   body {
-zoom: 0.8; /* ลดขนาดเว็บลงเหลือ 80% */
-
+    zoom: 0.8;
   }
   #screen-lock {
     position: fixed;
@@ -66,10 +64,10 @@ zoom: 0.8; /* ลดขนาดเว็บลงเหลือ 80% */
   <div id="lock-box">
     <h2 style="margin-bottom: 20px;">Please enter the access code</h2>
     <select id="duration-select">
-      <option value="minute" />1 minute (Code:)
-      <option value="day" />1 day (Code: zsdvc)
-      <option value="7days" />7 days (Code:)
-      <option value="30days" />30 days (Code:)
+      <option value="minute">1 minute</option>
+      <option value="day">1 day</option>
+      <option value="7days">7 days</option>
+      <option value="30days">30 days</option>
     </select><br/>
     <input type="text" id="access-input" placeholder="Enter access code" />
     <button id="unlock-btn">Continue</button>
@@ -90,11 +88,11 @@ zoom: 0.8; /* ลดขนาดเว็บลงเหลือ 80% */
     return now.getTime();
   }
 
-  const codes = {
-    minute: { code: "1234", type: "minute", value: 1 },
-    day: { code: "zsdvc", type: "day", value: 1 },
-    "7days": { code: "123456", type: "day", value: 7 },
-    "30days": { code: "1234567", type: "day", value: 30 }
+  const durationMap = {
+    minute: { type: "minute", value: 1 },
+    day: { type: "day", value: 1 },
+    "7days": { type: "day", value: 7 },
+    "30days": { type: "day", value: 30 }
   };
 
   let countdownInterval;
@@ -143,18 +141,26 @@ zoom: 0.8; /* ลดขนาดเว็บลงเหลือ 80% */
   document.getElementById("unlock-btn").addEventListener("click", function () {
     const inputCode = document.getElementById("access-input").value.trim();
     const selected = document.getElementById("duration-select").value;
-    const selectedCode = codes[selected];
+    const url = "https://script.google.com/macros/s/AKfycbwC5nmqMIUq65NcPmgG1mH7M_DOV674_4iJyUO-c6QmvmRbg_QbHsuyRZG1o_lZrHw/exec=" + encodeURIComponent(inputCode) + "&type=" + encodeURIComponent(selected);
 
-    if (inputCode === selectedCode.code) {
-      const expirationTime = getExpirationTime(selectedCode.type, selectedCode.value);
-      localStorage.setItem("access_granted", true);
-      localStorage.setItem("expiration_time", expirationTime);
-      document.getElementById("screen-lock").style.display = "none";
-      document.body.classList.remove("locked");
-      startCountdown(expirationTime);
-      window.AppInventor.setWebViewString("unlocked");
-    } else {
-      alert("Invalid access code.");
-    }
+    fetch(url)
+      .then(response => response.text())
+      .then(result => {
+        if (result === "valid") {
+          const expirationTime = getExpirationTime(durationMap[selected].type, durationMap[selected].value);
+          localStorage.setItem("access_granted", true);
+          localStorage.setItem("expiration_time", expirationTime);
+          document.getElementById("screen-lock").style.display = "none";
+          document.body.classList.remove("locked");
+          startCountdown(expirationTime);
+          window.AppInventor.setWebViewString("unlocked");
+        } else {
+          alert("Invalid access code.");
+        }
+      })
+      .catch(err => {
+        alert("Error connecting to server.");
+        console.error(err);
+      });
   });
 </script>

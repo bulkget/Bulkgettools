@@ -142,6 +142,7 @@
     const inputCode = document.getElementById("access-input").value.trim();
     const selected = document.getElementById("duration-select").value;
     const url = "https://script.google.com/macros/s/AKfycbxpgnHFx25XGdA-8yfP_17e_GqcremB5qqBlWaJ0yIUxQb4mc6o01TYPFS8TKt8nWQ/exec?code=" + encodeURIComponent(inputCode) + "&type=" + encodeURIComponent(selected);
+
     fetch(url)
       .then(response => response.text())
       .then(result => {

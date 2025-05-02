@@ -141,7 +141,7 @@
   document.getElementById("unlock-btn").addEventListener("click", function () {
     const inputCode = document.getElementById("access-input").value.trim();
     const selected = document.getElementById("duration-select").value;
-    const url = "https://script.google.com/macros/s/AKfycbz5Y4MarI5teJp2BXbzLO-EAe6DQyUjVp5bGIu-FenWP3VZcK-r8z37UUeguIoxNjk/exec" + encodeURIComponent(inputCode) + "&type=" + encodeURIComponent(selected);
+    const url = "https://script.google.com/macros/s/AKfycbxpgnHFx25XGdA-8yfP_17e_GqcremB5qqBlWaJ0yIUxQb4mc6o01TYPFS8TKt8nWQ/exec" + encodeURIComponent(inputCode) + "&type=" + encodeURIComponent(selected);
 
     fetch(url)
       .then(response => response.text())
